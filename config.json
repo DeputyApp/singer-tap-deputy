@@ -5,8 +5,8 @@
   "user_agent": "Deputy (rhutchison@deputy.com)",
   "start_date": "0000-00-00T00:00:00",
 
-  "deputy_domain": "https://df47d631053042.au.deputy.com",
-  "deputy_token": "a2fcbd0fec11a6d708282f60545bf749",
+  "deputy_domain": "",
+  "deputy_token": "",
   "resources": ["ALL"],
   "debugging": false
 }
