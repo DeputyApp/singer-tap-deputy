@@ -3,13 +3,14 @@ import requests
 import os
 import json
 import singer
-import singer.stats
+#import singer.stats
 import datetime
 import logging
 
 import http.client as http_client
 
 from singer import utils
+#from singer import stats
 from jsonschema import ValidationError, Draft4Validator, validators, FormatChecker
 
 # TODO: RECORD to SCHEMA Validation prior to write_record()
@@ -54,8 +55,8 @@ RESOURCES = {
     30: "PublicHoliday",
     31: "Roster",
     32: "RosterOpen",
-    33: "RosterSwap",
-    34: "SalesData",
+#    33: "RosterSwap",   # it's ephemeral. Not required!
+#    34: "SalesData",    # too big and bloated. Besides we are not owner of the data here
     35: "Schedule",
     36: "StressProfile",
     37: "Timesheet",
@@ -109,7 +110,10 @@ def do_request(url, method, data=None):
         requests_log = logging.getLogger("requests.packages.urllib3")
         requests_log.setLevel(logging.DEBUG)
         requests_log.propagate = True
-    return SESSION.request(url=url, method=method, data=data, headers={'Authorization': 'OAuth ' + CONFIG['deputy_token'], 'dp-meta-option': 'none'}).json()
+    output =  SESSION.request(url=url, method=method, data=data, headers={'Authorization': 'OAuth ' + CONFIG['deputy_token'], 'dp-meta-option': 'none'})
+    if output:
+        return output.json()
+    return []
 
 
 def do_get_date(key):
@@ -183,7 +187,8 @@ def do_resource_sync():
     resources = do_get_resources()
 
     for resource in resources:
-        with singer.stats.Timer(source=resource[0].lower() + resource[1:]) as stats:
+        #with singer.stats.Timer(source=resource[0].lower() + resource[1:]) as stats:
+        if 1:
             array = []
             data = do_query_records(resource, array, 500, True)
 
@@ -193,7 +198,7 @@ def do_resource_sync():
                 schema = utils.load_json(get_abs_path('schemas/{}.json'.format(resource[0].lower() + resource[1:])))
 
                 singer.write_schema(resource[0].lower() + resource[1:], schema, ["Id"])
-                stats.record_count = len(data)
+                #stats.record_count = len(data)
 
                 # for each record
                 for row in data:
@@ -210,10 +215,13 @@ def do_resource_sync():
                 do_save_state(STATE)
             else:
                 LOGGER.info('%s schema is up to date, sync not required.', resource)
+                utils.update_state(STATE, resource[0].lower() + resource[1:], CONFIG['start_date'])
+                do_save_state(STATE)
 
 
 def do_build_schema(resource):
-    with singer.stats.Timer(source=resource[0].lower() + resource[1:]):
+    #with singer.stats.Timer(source=resource[0].lower() + resource[1:]):
+    if 1:
         data = do_request(CONFIG['deputy_domain'] + '/api/v1/resource/%s/INFO' % resource, 'GET')
         fields = data['fields']
         joins = data['joins']
