@@ -23,30 +23,7 @@ To set up Deputy in Stitch, you need:
 - Administrative login to Deputy. Please note if this login (or user) is ever discarded or changed access level, then the data sync will stop working!
 
 #
-## [tap_name] Replication
+## Deputy Replication
 
-If pertinent, include details about how the tap replicates data and/or uses the API. As Stitch users are billed for total rows replicated, any info that can shed light on the number of rows replicated or reduce usage is considered necessary.
+Your selected [Deputy resources](https://www.deputy.com/api-doc/Resources/Employee) will be synchorized by [Resource API calls](https://www.deputy.com/api-doc/API/Resource_Calls). All tables as "id" as primary key and "modified" as timestamp that is used to finding new/updated data since last sync. 
 
-Examples:
-
-- Replication strategy - attribution/conversion windows ([Google AdWords](https://www.stitchdata.com/docs/integrations/saas/google-adwords#data-extraction-conversion-window)), event-based updates, etc.
-- API usage, especially for services that enforce rate limits or quotas, like Salesforce or [Marketo](https://www.stitchdata.com/docs/integrations/saas/marketo#marketo-daily-api-call-limits)
-
----
-
-## [tap_name] Table Schemas
-
-For **each** table that the tap produces, provide the following:
-
-- Table name: 
-- Description:
-- Primary key column(s): 
-- Replicated fully or incrementally _(uses a bookmark to maintain state)_:
-- Bookmark column(s): _(if replicated incrementally)_ 
-- Link to API endpoint documentation:
-
----
-
-## Troubleshooting / Other Important Info
-
-Anything else users should know about using this tap? For example: `some_column` is a Unix timestamp.
