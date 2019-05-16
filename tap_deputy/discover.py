@@ -22,7 +22,15 @@ def get_schema(client, resource_name):
     data = client.get('/api/v1/resource/{}/INFO'.format(resource_name))
 
     properties = {}
-    metadata = []
+    metadata = [
+        {
+            'breadcrumb': [],
+            'metadata': {
+                'tap-eloqua.resource': resource_name
+            }
+        }
+    ]
+
     for field_name, field_type in data['fields'].items():
         if field_type in ['Date', 'DateTime']:
             json_schema = {

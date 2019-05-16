@@ -62,7 +62,7 @@ class DeputyClient(object):
     def request(self, method, path=None, url=None, auth_call=False, **kwargs):
         if auth_call == False and \
             (self.__access_token is None or \
-             self.__expires_at >= datetime.utcnow()):
+             self.__expires_at <= datetime.utcnow()):
             self.refresh()
 
         if url is None and path:
@@ -85,8 +85,6 @@ class DeputyClient(object):
         with metrics.http_request_timer(endpoint) as timer:
             response = self.__session.request(method, url, **kwargs)
             timer.tags[metrics.Tag.http_status_code] = response.status_code
-
-        print(response.text)
 
         if response.status_code >= 500:
             raise Server5xxError()
