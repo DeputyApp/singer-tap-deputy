@@ -1,3 +1,0 @@
-requests==2.12.4
-stitchstream-python==0.4.1
-singer-python==1.6.0a2
