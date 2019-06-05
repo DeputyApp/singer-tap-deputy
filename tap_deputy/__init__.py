@@ -115,12 +115,7 @@ def main():
         if parsed_args.discover:
             do_discover(client)
         else:
-            if parsed_args.catalog:
-                catalog = parsed_args.catalog
-            else:
-                catalog = discover(client)
-
             sync(client,
-                 catalog,
+                 parsed_args.catalog,
                  parsed_args.state,
                  parsed_args.config['start_date'])
