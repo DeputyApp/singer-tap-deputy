@@ -42,8 +42,6 @@ class DeputyClient(object):
                 'scope': 'longlife_refresh_token'
             })
 
-        print(data)
-
         self.__config['refresh_token'] = data['refresh_token']
 
         with open(self.__config_path, 'w') as file:
