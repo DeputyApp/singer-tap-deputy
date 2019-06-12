@@ -100,3 +100,5 @@ def sync(client, catalog, state, start_date):
             if selected:
                 update_current_stream(state, stream.tap_stream_id)
                 sync_stream(client, catalog, state, start_date, stream, mdata)
+
+    update_current_stream(state, None)
