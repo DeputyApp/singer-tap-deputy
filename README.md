@@ -10,6 +10,8 @@ This tap:
 
 ## Configuration
 
+Take a look at the [example config](example.config.json) as a starting point for creating your own.
+
 THe tap requires an OAuth client is configured and a refresh token is issued. Follow the Deputy [authentication docs to setup an OAuth client](https://www.deputy.com/api-doc/API/Authentication).
 
 Config properties:
