@@ -24,11 +24,20 @@ Config properties:
 | `user_agent` | N | "Vandelay Industries ETL Runner" | The user agent to send on every request. |
 
 
-## Usage 
+## Usage
 
-To run `tap-deputy` with the configuration file, use this command:
+First read through Singer's [Running and Developing Singer Taps and Targets](https://github.com/singer-io/getting-started/blob/master/docs/RUNNING_AND_DEVELOPING.md#running-and-developing-singer-taps-and-targets) for getting started with running a tap and target.
+
+For basic usage, run `tap-deputy` with the configuration file.
+
+Discovery:
 
 ```sh
-tap-deputy -c my-config.json
+tap-deputy -c my-config.json --discover
 ```
 
+Sync:
+
+```sh
+tap-deputy -c my-config.json --catalog my-catalog.json
+```
