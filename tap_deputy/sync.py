@@ -42,7 +42,7 @@ def sync_stream(client, catalog, state, start_date, stream, mdata):
     write_schema(stream)
 
     root_metadata = mdata.get(())
-    resource_name = root_metadata['tap-eloqua.resource']
+    resource_name = root_metadata['tap-deputy.resource']
 
     count = 500
     offset = 0

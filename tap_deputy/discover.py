@@ -80,7 +80,7 @@ def get_schema(client, resource_name):
         {
             'breadcrumb': [],
             'metadata': {
-                'tap-eloqua.resource': resource_name
+                'tap-deputy.resource': resource_name
             }
         }
     ]
