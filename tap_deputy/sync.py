@@ -79,6 +79,10 @@ def sync_stream(client, catalog, state, start_date, stream, mdata):
 
         write_bookmark(state, stream_name, max_modified)
 
+def update_current_stream(state, stream_name=None):  
+    set_currently_syncing(state, stream_name) 
+    singer.write_state(state)
+
 def sync(client, catalog, state, start_date):
     if not catalog:
         catalog = discover(client)
@@ -88,7 +92,7 @@ def sync(client, catalog, state, start_date):
 
     for stream in selected_streams:
         mdata = metadata.to_map(stream.metadata)
-        set_currently_syncing(state, stream.tap_stream_id)
+        update_current_stream(state, stream.tap_stream_id)
         sync_stream(client, catalog, state, start_date, stream, mdata)
 
-    set_currently_syncing(state)
+    update_current_stream(state)
