@@ -1,5 +1,6 @@
 import singer
 from singer import metrics, metadata, Transformer
+from singer.bookmarks import set_currently_syncing
 
 from tap_deputy.discover import discover
 
@@ -78,27 +79,16 @@ def sync_stream(client, catalog, state, start_date, stream, mdata):
 
         write_bookmark(state, stream_name, max_modified)
 
-def update_current_stream(state, stream_name):
-    state['current_stream'] = stream_name
-    singer.write_state(state)
-
 def sync(client, catalog, state, start_date):
-    last_stream = state.get('current_stream')
-    all_selected = False
-
     if not catalog:
         catalog = discover(client)
-        all_selected = True
+        selected_streams = catalog.streams
+    else:
+        selected_streams = catalog.get_selected_streams(state)
 
-    for stream in catalog.streams:
+    for stream in selected_streams:
         mdata = metadata.to_map(stream.metadata)
-        root_metadata = mdata.get(())
-        selected = all_selected or (root_metadata and root_metadata.get('selected') is True)
-        if last_stream == stream.tap_stream_id or last_stream is None:
-            if last_stream is not None:
-                last_stream = None
-            if selected:
-                update_current_stream(state, stream.tap_stream_id)
-                sync_stream(client, catalog, state, start_date, stream, mdata)
+        set_currently_syncing(state, stream.tap_stream_id)
+        sync_stream(client, catalog, state, start_date, stream, mdata)
 
-    update_current_stream(state, None)
+    set_currently_syncing(state)
