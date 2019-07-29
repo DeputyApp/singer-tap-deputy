@@ -43,3 +43,7 @@ Sync:
 ```sh
 tap-deputy -c my-config.json --catalog my-catalog.json
 ```
+
+---
+
+Copyright &copy; 2019 Stitch
