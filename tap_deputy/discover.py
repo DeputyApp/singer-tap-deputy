@@ -22,7 +22,7 @@ RESOURCES = {
     'EmployeeRole': 'employee_roles',
     'EmployeeSalaryOpunitCosting': 'employee_salary_opunit_costing',
     'EmployeeWorkplace': 'employee_workplaces',
-    'EmploymentCondition': 'employeement_conditions',
+    'EmploymentCondition': 'employment_conditions',
     'EmploymentContract': 'employee_contracts',
     'EmploymentContractLeaveRules': 'employee_contract_leave_rules',
     'Event': 'events',
