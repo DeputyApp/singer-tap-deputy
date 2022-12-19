@@ -5,7 +5,7 @@ import json
 import argparse
 
 import singer
-from singer import metadata
+from singer.utils import parse_args
 
 from tap_deputy.client import DeputyClient
 from tap_deputy.discover import discover
@@ -29,8 +29,8 @@ def do_discover(client):
         client.get(
             '/api/v1/resource/Contact/INFO',
             endpoint='resource_info')
-    except:
-        raise Exception('Error testing Deputy authentication')
+    except Exception as err:
+        raise Exception('Error testing Deputy authentication') from err
 
     LOGGER.info('Starting discover')
     catalog = discover(client)
@@ -39,9 +39,11 @@ def do_discover(client):
 
 @singer.utils.handle_top_exception(LOGGER)
 def main():
-    parsed_args = singer.utils.parse_args(REQUIRED_CONFIG_KEYS)
+    parsed_args = parse_args(REQUIRED_CONFIG_KEYS)
+    if parsed_args.dev:
+        LOGGER.warning("Executing Tap in Dev mode",)
 
-    with DeputyClient(parsed_args.config, parsed_args.config_path) as client:
+    with DeputyClient(parsed_args.config, parsed_args.config_path, parsed_args.dev) as client:
         if parsed_args.discover:
             do_discover(client)
         else:
