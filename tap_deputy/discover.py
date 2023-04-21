@@ -1,7 +1,4 @@
-import singer
 from singer.catalog import Catalog, CatalogEntry, Schema
-
-LOGGER = singer.get_logger()
 
 RESOURCES = {
     'Address': 'addresses',
