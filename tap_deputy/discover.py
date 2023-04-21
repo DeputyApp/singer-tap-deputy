@@ -1,4 +1,7 @@
+import singer
 from singer.catalog import Catalog, CatalogEntry, Schema
+
+LOGGER = singer.get_logger()
 
 RESOURCES = {
     'Address': 'addresses',
@@ -86,6 +89,9 @@ def get_schema(client, resource_name):
     ]
 
     for field_name, field_type in data['fields'].items():
+        if field_type == 'Json':
+            continue
+
         if field_type in ['Date', 'DateTime']:
             json_schema = {
                 'type': ['null', 'string'],
