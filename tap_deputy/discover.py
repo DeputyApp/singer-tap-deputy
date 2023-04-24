@@ -67,7 +67,8 @@ TYPE_MAP = {
     'VarChar': 'string',
     'Blob': 'string',
     'Bit': 'boolean',
-    'Time': 'string'
+    'Time': 'string',
+    'Json': 'string',
 }
 
 def get_schema(client, resource_name):
@@ -86,9 +87,6 @@ def get_schema(client, resource_name):
     ]
 
     for field_name, field_type in data['fields'].items():
-        if field_type == 'Json':
-            continue
-
         if field_type in ['Date', 'DateTime']:
             json_schema = {
                 'type': ['null', 'string'],
