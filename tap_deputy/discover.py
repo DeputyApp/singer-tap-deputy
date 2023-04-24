@@ -86,6 +86,10 @@ def get_schema(client, resource_name):
     ]
 
     for field_name, field_type in data['fields'].items():
+        # Skipping all fields of type Json until we decide on how to handle "[]" as null response
+        # Json data fields
+        if field_type == "Json":
+            continue
         if field_type in ['Date', 'DateTime']:
             json_schema = {
                 'type': ['null', 'string'],
