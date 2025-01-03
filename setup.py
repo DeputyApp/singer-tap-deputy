@@ -3,7 +3,7 @@
 from setuptools import setup
 
 setup(name='tap-deputy',
-      version='1.1.1',
+      version='1.1.2',
       description='Singer.io tap for extracting data from the Deputy API',
       author='Deputy',
       url='https://www.deputy.com',
@@ -12,7 +12,7 @@ setup(name='tap-deputy',
       py_modules=['tap_deputy'],
       install_requires=[
           'backoff==1.8.0',
-          'requests==2.21.0',
+          'requests==2.32.3',
           'singer-python==5.13.0'
       ],
       extras_require= {
