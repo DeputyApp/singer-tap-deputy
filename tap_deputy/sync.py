@@ -27,6 +27,14 @@ def process_records(stream, mdata, max_modified, records):
                 if record['Modified'] > max_modified:
                     max_modified = record['Modified']
 
+                for field, field_schema in schema['properties'].items():
+                    if (
+                        'format' in field_schema and
+                        field_schema['format'] == 'date-time' and
+                        field in record and record[field] == ''
+                    ):
+                        record[field] = None
+
                 record = transformer.transform(record,
                                                schema,
                                                mdata)
