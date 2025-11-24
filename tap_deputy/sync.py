@@ -22,16 +22,16 @@ def write_schema(stream):
 def process_records(stream, mdata, max_modified, records):
     schema = stream.schema.to_dict()
     with metrics.record_counter(stream.tap_stream_id) as counter:
-        for record in records:
-            if record['Modified'] > max_modified:
-                max_modified = record['Modified']
+        with Transformer() as transformer:
+            for record in records:
+                if record['Modified'] > max_modified:
+                    max_modified = record['Modified']
 
-            with Transformer() as transformer:
                 record = transformer.transform(record,
                                                schema,
                                                mdata)
-            singer.write_record(stream.tap_stream_id, record)
-            counter.increment()
+                singer.write_record(stream.tap_stream_id, record)
+                counter.increment()
         return max_modified
 
 def sync_stream(client, catalog, state, start_date, stream, mdata):
@@ -79,8 +79,8 @@ def sync_stream(client, catalog, state, start_date, stream, mdata):
 
         write_bookmark(state, stream_name, max_modified)
 
-def update_current_stream(state, stream_name=None):  
-    set_currently_syncing(state, stream_name) 
+def update_current_stream(state, stream_name=None):
+    set_currently_syncing(state, stream_name)
     singer.write_state(state)
 
 def sync(client, catalog, state, start_date):
