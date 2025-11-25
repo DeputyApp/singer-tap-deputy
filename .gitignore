@@ -111,7 +111,6 @@ venv.bak/
 env.sh
 config.json
 test.*.json
-*.txt
 .autoenv.zsh
 
 rsa-key
