@@ -1,5 +1,7 @@
 pipeline {
-    agent any
+    agent {
+        docker { image 'python:3.11-slim' }
+    }
 
     environment {
         // Define a virtual environment path to be used across stages
@@ -25,7 +27,7 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 // Activate the virtual environment and install project and dev dependencies
-                sh "source ${VENV}/bin/activate && pip install -e .[dev]"
+                sh "source ${VENV}/bin/activate && pip install -e ."
             }
         }
 
