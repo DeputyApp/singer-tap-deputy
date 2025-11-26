@@ -43,3 +43,9 @@ Sync:
 ```sh
 tap-deputy -c my-config.json --catalog my-catalog.json
 ```
+
+Local Test:
+```sh
+tap-deputy --config config.json --discover > catalog.json
+tap-deputy --config config.json --catalog catalog.json > employees_data.jsonl
+```
