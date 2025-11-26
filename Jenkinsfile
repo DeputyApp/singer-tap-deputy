@@ -16,9 +16,9 @@ pipeline {
 
         stage('Setup Environment') {
             steps {
-                // Ensure python3 is available and create a virtual environment
-                sh 'python3 --version'
-                sh "python3 -m venv ${VENV}"
+                // Ensure python is available and create a virtual environment
+                sh 'python --version'
+                sh "python -m venv ${VENV}"
             }
         }
 
