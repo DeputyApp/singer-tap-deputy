@@ -1,5 +1,7 @@
 pipeline {
-    agent any
+    agent {
+        docker { image 'python:3.11-slim' }
+    }
 
     environment {
         // Define a virtual environment path to be used across stages
@@ -16,31 +18,31 @@ pipeline {
 
         stage('Setup Environment') {
             steps {
-                // Ensure python3 is available and create a virtual environment
-                sh 'python3 --version'
-                sh "python3 -m venv ${VENV}"
+                // Ensure python is available and create a virtual environment
+                sh 'python --version'
+                sh "python -m venv ${VENV}"
             }
         }
 
         stage('Install Dependencies') {
             steps {
-                // Activate the virtual environment and install project and dev dependencies
-                sh "source ${VENV}/bin/activate && pip install -e .[dev]"
+                // Install project and dev dependencies using the pip from the virtualenv
+                sh "${VENV}/bin/pip install -e ."
             }
         }
 
         stage('Linting') {
             steps {
                 // Run flake8 to check for code style issues
-                sh "source ${VENV}/bin/activate && flake8 tap_deputy/ tests/"
+                sh "${VENV}/bin/flake8 tap_deputy/ tests/"
             }
         }
 
         stage('Run Unit Tests') {
             steps {
-                // Activate the virtual environment and execute the test suite
+                // Execute the test suite using pytest from the virtualenv
                 // The --junitxml flag generates a report for Jenkins
-                sh "source ${VENV}/bin/activate && pytest --junitxml=junit.xml"
+                sh "${VENV}/bin/pytest --junitxml=junit.xml"
             }
         }
     }

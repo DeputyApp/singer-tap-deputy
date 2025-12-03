@@ -6,8 +6,10 @@ from tap_deputy.discover import discover
 
 LOGGER = singer.get_logger()
 
+
 def get_bookmark(state, stream_name, default):
     return state.get('bookmarks', {}).get(stream_name, default)
+
 
 def write_bookmark(state, stream_name, value):
     if 'bookmarks' not in state:
@@ -15,30 +17,41 @@ def write_bookmark(state, stream_name, value):
     state['bookmarks'][stream_name] = value
     singer.write_state(state)
 
+
 def write_schema(stream):
     schema = stream.schema.to_dict()
     singer.write_schema(stream.tap_stream_id, schema, stream.key_properties)
 
+
 def process_records(stream, mdata, max_modified, records):
     schema = stream.schema.to_dict()
     with metrics.record_counter(stream.tap_stream_id) as counter:
-        for record in records:
-            if record['Modified'] > max_modified:
-                max_modified = record['Modified']
+        with Transformer() as transformer:
+            for record in records:
+                if record['Modified'] > max_modified:
+                    max_modified = record['Modified']
 
-            with Transformer() as transformer:
+                for field, field_schema in schema['properties'].items():
+                    if (
+                        'format' in field_schema and
+                        field_schema['format'] == 'date-time' and
+                        field in record and record[field] == ''
+                    ):
+                        record[field] = None
+
                 record = transformer.transform(record,
                                                schema,
                                                mdata)
-            singer.write_record(stream.tap_stream_id, record)
-            counter.increment()
+                singer.write_record(stream.tap_stream_id, record)
+                counter.increment()
         return max_modified
+
 
 def sync_stream(client, catalog, state, start_date, stream, mdata):
     stream_name = stream.tap_stream_id
     last_datetime = get_bookmark(state, stream_name, start_date)
 
-    LOGGER.info('{} - Syncing data since {}'.format(stream.tap_stream_id, last_datetime))
+    LOGGER.info(f"{stream.tap_stream_id} - Syncing data since {last_datetime}")
 
     write_schema(stream)
 
@@ -79,9 +92,11 @@ def sync_stream(client, catalog, state, start_date, stream, mdata):
 
         write_bookmark(state, stream_name, max_modified)
 
-def update_current_stream(state, stream_name=None):  
-    set_currently_syncing(state, stream_name) 
+
+def update_current_stream(state, stream_name=None):
+    set_currently_syncing(state, stream_name)
     singer.write_state(state)
+
 
 def sync(client, catalog, state, start_date):
     if not catalog:
