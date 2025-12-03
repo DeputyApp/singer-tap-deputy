@@ -6,8 +6,10 @@ import requests
 from requests.exceptions import ConnectionError
 from singer import metrics
 
+
 class Server5xxError(Exception):
     pass
+
 
 class DeputyClient(object):
     def __init__(self, config, config_path):
@@ -50,16 +52,17 @@ class DeputyClient(object):
         self.__refresh_token = data['refresh_token']
         self.__access_token = data['access_token']
 
+        # pad by 10 seconds for clock drift
         self.__expires_at = datetime.utcnow() + \
-            timedelta(seconds=data['expires_in'] - 10) # pad by 10 seconds for clock drift
+            timedelta(seconds=data['expires_in'] - 10)
 
     @backoff.on_exception(backoff.expo,
                           (Server5xxError, ConnectionError),
                           max_tries=5,
                           factor=2)
     def request(self, method, path=None, url=None, auth_call=False, **kwargs):
-        if auth_call == False and \
-            (self.__access_token is None or \
+        if auth_call is False and \
+            (self.__access_token is None or
              self.__expires_at <= datetime.utcnow()):
             self.refresh()
 
@@ -75,7 +78,7 @@ class DeputyClient(object):
         if 'headers' not in kwargs:
             kwargs['headers'] = {}
 
-        kwargs['headers']['Authorization'] = 'OAuth {}'.format(self.__access_token)
+        kwargs['headers']['Authorization'] = f'OAuth {self.__access_token}'
 
         if self.__user_agent:
             kwargs['headers']['User-Agent'] = self.__user_agent

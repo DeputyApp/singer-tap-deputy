@@ -2,10 +2,8 @@
 
 import sys
 import json
-import argparse
 
 import singer
-from singer import metadata
 
 from tap_deputy.client import DeputyClient
 from tap_deputy.discover import discover
@@ -22,6 +20,7 @@ REQUIRED_CONFIG_KEYS = [
     'refresh_token'
 ]
 
+
 def do_discover(client):
     LOGGER.info('Testing authentication')
     try:
@@ -29,13 +28,14 @@ def do_discover(client):
         client.get(
             '/api/v1/resource/Contact/INFO',
             endpoint='resource_info')
-    except:
-        raise Exception('Error testing Deputy authentication')
+    except Exception as e:
+        raise Exception(f'Error testing Deputy authentication: {e}') from e
 
     LOGGER.info('Starting discover')
     catalog = discover(client)
     json.dump(catalog.to_dict(), sys.stdout, indent=2)
     LOGGER.info('Finished discover')
+
 
 @singer.utils.handle_top_exception(LOGGER)
 def main():

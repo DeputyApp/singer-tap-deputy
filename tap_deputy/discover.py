@@ -71,6 +71,7 @@ TYPE_MAP = {
     'Json': 'string',
 }
 
+
 def get_schema(client, resource_name):
     data = client.get(
         '/api/v1/resource/{}/INFO'.format(resource_name),
@@ -113,6 +114,7 @@ def get_schema(client, resource_name):
     }
 
     return schema, metadata
+
 
 def discover(client):
     catalog = Catalog([])
