@@ -1,7 +1,7 @@
 import pytest
 from unittest.mock import Mock
 
-from singer.transform import SchemaMismatch, Transformer
+from singer.transform import SchemaMismatch
 
 from tap_deputy.sync import process_records
 
@@ -21,40 +21,66 @@ def stream_fixture(request):
     [
         # Employees Stream
         ({"stream_name": "employees", "schema": {
-            "type": "object", "properties": {
-                "Id": {"type": "integer"},
-                "Modified": {"type": ["string", "null"], "format": "date-time"},
-                "DateOfBirth": {"type": ["string", "null"], "format": "date-time"},
-                "StartDate": {"type": ["string", "null"], "format": "date-time"},
-            }}}, "DateOfBirth"),
+             "type": "object", "properties": {
+                 "Id": {"type": "integer"},
+                 "Modified": {
+                     "type": ["string", "null"], "format": "date-time"
+                 },
+                 "DateOfBirth": {
+                     "type": ["string", "null"], "format": "date-time"
+                 },
+                 "StartDate": {
+                     "type": ["string", "null"], "format": "date-time"
+                 },
+             }}}, "DateOfBirth"
+         ),
         ({"stream_name": "employees", "schema": {
-            "type": "object", "properties": {
-                "Id": {"type": "integer"},
-                "Modified": {"type": ["string", "null"], "format": "date-time"},
-                "DateOfBirth": {"type": ["string", "null"], "format": "date-time"},
-                "StartDate": {"type": ["string", "null"], "format": "date-time"},
-            }}}, "StartDate"),
+             "type": "object", "properties": {
+                 "Id": {"type": "integer"},
+                 "Modified": {
+                     "type": ["string", "null"], "format": "date-time"
+                 },
+                 "DateOfBirth": {
+                     "type": ["string", "null"], "format": "date-time"
+                 },
+                 "StartDate": {
+                     "type": ["string", "null"], "format": "date-time"
+                 },
+             }}}, "StartDate"
+         ),
 
         # Rosters Stream
         ({"stream_name": "rosters", "schema": {
-            "type": "object", "properties": {
-                "Id": {"type": "integer"},
-                "Modified": {"type": ["string", "null"], "format": "date-time"},
-                "Date": {"type": ["string", "null"], "format": "date-time"},
-            }}}, "Date"),
+             "type": "object", "properties": {
+                 "Id": {"type": "integer"},
+                 "Modified": {
+                     "type": ["string", "null"], "format": "date-time"
+                 },
+                 "Date": {"type": ["string", "null"], "format": "date-time"},
+             }}}, "Date"
+         ),
 
         # Timesheets Stream
         ({"stream_name": "timesheets", "schema": {
-            "type": "object", "properties": {
-                "Id": {"type": "integer"},
-                "Modified": {"type": ["string", "null"], "format": "date-time"},
-                "Date": {"type": ["string", "null"], "format": "date-time"},
-                "AccrualStateChangedAt": {"type": ["string", "null"], "format": "date-time"},
-            }}}, "AccrualStateChangedAt"),
+             "type": "object", "properties": {
+                 "Id": {"type": "integer"},
+                 "Modified": {
+                     "type": ["string", "null"], "format": "date-time"
+                 },
+                 "Date": {"type": ["string", "null"], "format": "date-time"},
+                 "AccrualStateChangedAt": {
+                     "type": ["string", "null"], "format": "date-time"
+                 },
+             }}}, "AccrualStateChangedAt"
+         ),
     ],
     indirect=["stream_fixture"]
 )
-def test_process_records_handles_empty_date_strings(stream_fixture, capsys, date_field):
+def test_process_records_handles_empty_date_strings(
+    stream_fixture,
+    capsys,
+    date_field
+):
     """
     Verify that process_records correctly handles an empty string for any
     date-time field by converting it to null and processing successfully.
@@ -70,8 +96,9 @@ def test_process_records_handles_empty_date_strings(stream_fixture, capsys, date
     try:
         # This should run without raising an exception
         process_records(stream_fixture, mdata, max_modified, records)
-    except SchemaMismatch as e:
-        pytest.fail(f"process_records raised SchemaMismatch unexpectedly for field '{date_field}': {e}")
+    except SchemaMismatch:
+        pytest.fail("process_records raised SchemaMismatch unexpectedly for "
+                    f"field '{date_field}' with an empty string value.")
 
     # Verify that a record was written to stdout
     captured = capsys.readouterr()

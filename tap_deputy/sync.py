@@ -6,8 +6,10 @@ from tap_deputy.discover import discover
 
 LOGGER = singer.get_logger()
 
+
 def get_bookmark(state, stream_name, default):
     return state.get('bookmarks', {}).get(stream_name, default)
+
 
 def write_bookmark(state, stream_name, value):
     if 'bookmarks' not in state:
@@ -15,9 +17,11 @@ def write_bookmark(state, stream_name, value):
     state['bookmarks'][stream_name] = value
     singer.write_state(state)
 
+
 def write_schema(stream):
     schema = stream.schema.to_dict()
     singer.write_schema(stream.tap_stream_id, schema, stream.key_properties)
+
 
 def process_records(stream, mdata, max_modified, records):
     schema = stream.schema.to_dict()
@@ -42,11 +46,12 @@ def process_records(stream, mdata, max_modified, records):
                 counter.increment()
         return max_modified
 
+
 def sync_stream(client, catalog, state, start_date, stream, mdata):
     stream_name = stream.tap_stream_id
     last_datetime = get_bookmark(state, stream_name, start_date)
 
-    LOGGER.info('{} - Syncing data since {}'.format(stream.tap_stream_id, last_datetime))
+    LOGGER.info(f"{stream.tap_stream_id} - Syncing data since {last_datetime}")
 
     write_schema(stream)
 
@@ -87,9 +92,11 @@ def sync_stream(client, catalog, state, start_date, stream, mdata):
 
         write_bookmark(state, stream_name, max_modified)
 
+
 def update_current_stream(state, stream_name=None):
     set_currently_syncing(state, stream_name)
     singer.write_state(state)
+
 
 def sync(client, catalog, state, start_date):
     if not catalog:
