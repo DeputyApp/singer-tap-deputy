@@ -30,13 +30,18 @@ def test_discover_simple_type_mappings(deputy_type, expected_jsonschema_type):
     }
 
     catalog = discover(client)
-    employees_stream = next((s for s in catalog.streams if s.tap_stream_id == stream_name), None)
+    employees_stream = None
+    for s in catalog.streams:
+        if s.tap_stream_id == stream_name:
+            employees_stream = s
 
     assert employees_stream is not None
-    schema_properties = employees_stream.schema.to_dict()["properties"]
+    schema_dict = employees_stream.schema.to_dict()
+    schema_properties = schema_dict["properties"]
 
     assert "SomeTestField" in schema_properties
-    assert schema_properties["SomeTestField"]["type"] == expected_jsonschema_type
+    field_schema = schema_properties["SomeTestField"]
+    assert field_schema["type"] == expected_jsonschema_type
 
 
 @pytest.mark.parametrize("deputy_type", ["Date", "DateTime"])
@@ -54,10 +59,14 @@ def test_discover_datetime_type_mapping(deputy_type):
     }
 
     catalog = discover(client)
-    employees_stream = next((s for s in catalog.streams if s.tap_stream_id == stream_name), None)
+    employees_stream = None
+    for s in catalog.streams:
+        if s.tap_stream_id == stream_name:
+            employees_stream = s
 
     assert employees_stream is not None
-    schema_properties = employees_stream.schema.to_dict()["properties"]
+    schema_dict = employees_stream.schema.to_dict()
+    schema_properties = schema_dict["properties"]
 
     assert "SomeDateField" in schema_properties
     field_schema = schema_properties["SomeDateField"]
