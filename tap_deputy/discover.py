@@ -67,7 +67,8 @@ TYPE_MAP = {
     'VarChar': 'string',
     'Blob': 'string',
     'Bit': 'boolean',
-    'Time': 'string'
+    'Time': 'string',
+    'Json': 'string',
 }
 
 
